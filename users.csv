@@ -1,4 +1,4 @@
-﻿"UserName","Employee Name","Department","Job Titel","Password","Status","Type"
-"10000807","Ahmed Hassanin Hafeez","Admin","Admin","3a4ever2020","Active","Admin"
-"10000884","Ahmed hefny","NonPharma","Employee","123456","Active","Emp"
-"11111111","Adam Ahmed","Pharma","Employee","Adam@2010","Active","Emp"
+UserName,Employee Name,Department,Job Titel,Password,Status,Type
+10000807,Ahmed Hassanin Hafeez,Admin,Admin,3a4ever2020,Active,Admin
+10000884,Ahmed hefny,NonPharma,Employee,123456,Active,Emp
+11111111,Adam Ahmed,NonPharma,Employee,Adam@2010,Active,Emp
