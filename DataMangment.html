@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إدارة البيانات — Warehouse Scanner (Sysora)</title>
+<style>
+  :root{
+    --bg:#F5F6FA; --surface:#FFFFFF; --surface-2:#F0F1F5; --border:#DDE1EA;
+    --text:#1A1F2B; --muted:#6B7280; --amber:#E8A33D; --amber-fg:#8F5A17;
+    --mint:#3DDC97; --mint-fg:#0F6B45; --red:#E8615D; --red-fg:#B03B37;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:'Tajawal','Segoe UI',Arial,sans-serif; padding:18px; max-width:1400px; margin:0 auto; }
+  .topbar{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  h1{ font-size:19px; margin:6px 0 2px; }
+  .langBtn{ background:var(--surface); border:1.5px solid var(--border); color:var(--amber-fg); border-radius:9px; padding:7px 12px; font-weight:800; font-size:12.5px; flex-shrink:0; margin-top:4px; }
+  .sub{ color:var(--muted); font-size:13px; margin-bottom:18px; }
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:16px; }
+  .card h2{ font-size:14.5px; margin:0 0 12px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+  .collapse-toggle{ width:100%; background:none; border:none; padding:0; display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:12px; }
+  .collapse-toggle h2{ margin-bottom:0; }
+  .collapse-arrow{ color:var(--muted); font-size:14px; transition:transform .2s ease; flex-shrink:0; }
+  .collapse-arrow.closed{ transform:rotate(-90deg); }
+  #ghSectionBody.closed{ display:none; }
+  .tabs{ display:flex; gap:4px; margin:-4px -4px 16px; border-bottom:1.5px solid var(--border); overflow-x:auto; }
+  .tab-btn{ background:none; border:none; padding:11px 14px; font-size:12.5px; font-weight:700; color:var(--muted); border-bottom:2.5px solid transparent; margin-bottom:-1.5px; border-radius:0; white-space:nowrap; }
+  .tab-btn.active{ color:var(--amber-fg); border-bottom-color:var(--amber); }
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; }
+  label{ display:block; font-size:12.5px; color:var(--muted); margin:10px 0 5px; }
+  label:first-of-type{ margin-top:0; }
+  input[type=text], input[type=password], input[type=file]{
+    width:100%; padding:10px 12px; border:1.5px solid var(--border); border-radius:9px;
+    background:var(--surface-2); color:var(--text); font-size:13.5px; font-family:inherit;
+  }
+  input:focus{ outline:none; border-color:var(--amber); }
+  .row{ display:flex; gap:10px; }
+  .row > div{ flex:1; }
+  .check-row{ display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12.5px; color:var(--muted); }
+  .check-row input{ width:auto; }
+  button{ font-family:inherit; cursor:pointer; border:none; border-radius:10px; padding:11px 16px; font-weight:700; font-size:13.5px; }
+  .btn-primary{ background:var(--amber); color:#1a1204; width:100%; margin-top:14px; }
+  .btn-secondary{ background:var(--surface-2); border:1.5px solid var(--border); color:var(--text); width:100%; margin-top:14px; }
+  .btn-primary:disabled, .btn-secondary:disabled{ opacity:.5; cursor:not-allowed; }
+  .hint{ font-size:11.5px; color:var(--muted); margin-top:6px; line-height:1.6; }
+  .status{ margin-top:12px; padding:10px 12px; border-radius:9px; font-size:12.5px; display:none; line-height:1.7; white-space:pre-wrap; }
+  .status.show{ display:block; }
+  .status.ok{ background:#EAF7F0; border:1px solid var(--mint); color:var(--mint-fg); }
+  .status.err{ background:#FBEDEC; border:1px solid var(--red); color:var(--red-fg); }
+  .status.info{ background:var(--surface-2); border:1px solid var(--border); color:var(--muted); }
+  .preview{ margin-top:10px; max-height:220px; overflow-y:auto; border:1px solid var(--border); border-radius:9px; font-size:12px; }
+  .preview table{ width:100%; border-collapse:collapse; }
+  .preview th, .preview td{ padding:6px 8px; border-bottom:1px solid var(--border); text-align:right; }
+  .preview th{ background:var(--surface-2); position:sticky; top:0; }
+  #pasteTable{ width:100%; border-collapse:collapse; font-size:12.5px; min-width:480px; }
+  #pasteTable th{ background:var(--surface-2); padding:6px 6px; font-weight:700; color:var(--muted); font-size:11.5px; border-bottom:1.5px solid var(--border); }
+  #pasteTable td{ border-bottom:1px solid var(--border); padding:3px; }
+  #pasteTable input{ width:100%; border:1px solid transparent; background:transparent; padding:6px 7px; border-radius:6px; font-size:12.5px; color:var(--text); font-family:inherit; }
+  #pasteTable input:focus{ outline:none; border-color:var(--amber); background:var(--surface-2); }
+  #pasteTable .rowDelBtn{ background:none; border:none; color:var(--red); cursor:pointer; font-size:13px; padding:4px; }
+  .tag{ display:inline-block; padding:1px 7px; border-radius:6px; font-size:10.5px; font-weight:700; margin-inline-start:6px; }
+  .tag.new{ background:#EAF7F0; color:var(--mint-fg); }
+  .tag.update{ background:#FFF3E0; color:var(--amber-fg); }
+  summary{ cursor:pointer; font-size:12.5px; color:var(--muted); }
+</style>
+<style>
+.data-table-wrap{overflow:auto;max-height:520px;border:1px solid var(--border);border-radius:9px;margin-top:12px}
+.data-table{width:100%;border-collapse:collapse;font-size:12px;min-width:1100px}
+.data-table th{background:var(--surface-2);padding:8px;color:var(--muted);position:sticky;top:0;z-index:2;border-bottom:1.5px solid var(--border)}
+.data-table td{padding:6px;border-bottom:1px solid var(--border);white-space:nowrap}
+.data-table td input{background:transparent;border:1px solid transparent;padding:6px;width:100%;min-width:90px}
+.data-table td input:focus{background:var(--surface-2);border-color:var(--amber)}
+.check{width:18px!important;min-width:18px!important}
+.action-row{display:flex;gap:8px;margin-top:10px}.action-row button{flex:1}
+.main-panel{display:block}
+</style>
+<style>
+/* ضبط عرض الحقول والجداول حسب طبيعة البيانات */
+.row > div { min-width: 0; }
+
+#fileAdd input,
+#userAdd input { width: 100%; box-sizing: border-box; }
+
+/* الحقول القصيرة */
+#fSheetNo, #fDate, #fTime,
+#fStatus, #uStatus, #uType, #uJob,
+#qSheetNo, #qStatus, #uqDepartment {
+  max-width: 220px;
+}
+
+/* الحقول الطويلة */
+#fDepartment, #fSheetName, #fItemCode, #fPersonal,
+#uUser, #uEmployee, #uDepartment, #qDepartment,
+#qItemCode, #uq {
+  max-width: 420px;
+}
+
+/* جدول البيانات: كل عمود يأخذ مساحة مناسبة للمحتوى */
+.data-table {
+  table-layout: auto !important;
+  min-width: max-content !important;
+  width: 100% !important;
+}
+.data-table th,
+.data-table td { vertical-align: middle; }
+.data-table th:first-child,
+.data-table td:first-child { width: 35px; }
+.data-table th:last-child,
+.data-table td:last-child { width: 65px; }
+
+/* عرض تقريبي مناسب لكل حقل */
+.data-table th:nth-child(2), .data-table td:nth-child(2) { min-width: 110px; } /* Department */
+.data-table th:nth-child(3), .data-table td:nth-child(3) { min-width: 85px; }  /* SheetNo. */
+.data-table th:nth-child(4), .data-table td:nth-child(4) { min-width: 220px; } /* SheetName */
+.data-table th:nth-child(5), .data-table td:nth-child(5) { min-width: 115px; } /* Item Code */
+.data-table th:nth-child(6), .data-table td:nth-child(6) { min-width: 280px; } /* Item Name */
+.data-table th:nth-child(7), .data-table td:nth-child(7) { min-width: 120px; } /* Status */
+.data-table th:nth-child(8), .data-table td:nth-child(8) { min-width: 150px; } /* PersonalName */
+.data-table th:nth-child(9), .data-table td:nth-child(9) { min-width: 105px; } /* Date */
+.data-table th:nth-child(10), .data-table td:nth-child(10) { min-width: 90px; } /* Time */
+
+.data-table td input {
+  box-sizing: border-box;
+  min-width: 100%;
+  width: 100%;
+}
+
+/* جدول Users */
+#userTable .data-table th:nth-child(2), #userTable .data-table td:nth-child(2) { min-width: 130px; }
+#userTable .data-table th:nth-child(3), #userTable .data-table td:nth-child(3) { min-width: 180px; }
+#userTable .data-table th:nth-child(4), #userTable .data-table td:nth-child(4) { min-width: 130px; }
+#userTable .data-table th:nth-child(5), #userTable .data-table td:nth-child(5) { min-width: 150px; }
+#userTable .data-table th:nth-child(6), #userTable .data-table td:nth-child(6) { min-width: 110px; }
+#userTable .data-table th:nth-child(7), #userTable .data-table td:nth-child(7) { min-width: 100px; }
+#userTable .data-table th:nth-child(8), #userTable .data-table td:nth-child(8) { min-width: 90px; }
+
+/* على الشاشات الصغيرة */
+@media (max-width: 800px) {
+  #fSheetNo, #fDate, #fTime, #fStatus, #uStatus, #uType, #uJob,
+  #qSheetNo, #qStatus, #uqDepartment,
+  #fDepartment, #fSheetName, #fItemCode, #fPersonal,
+  #uUser, #uEmployee, #uDepartment, #qDepartment, #qItemCode, #uq {
+    max-width: 100%;
+  }
+}
+
+<style>
+/* تنسيق شاشات الإدخال والحذف */
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:end}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-card{min-width:0}
+.field-card label{display:block;margin-bottom:6px}
+.field-card input,.field-card select{width:100%;box-sizing:border-box}
+.readonly-field{background:var(--surface-2)!important;color:var(--muted);font-weight:700;cursor:not-allowed}
+.paste-meta{padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);margin-top:10px}
+.paste-meta .hint-title{font-weight:800;margin-bottom:10px}
+#pasteTable{width:100%;table-layout:auto}
+#pasteTable th,#pasteTable td{white-space:nowrap}
+#pasteTable th:nth-child(2),#pasteTable td:nth-child(2){min-width:110px}
+#pasteTable th:nth-child(3),#pasteTable td:nth-child(3){min-width:115px}
+#pasteTable th:nth-child(4),#pasteTable td:nth-child(4){min-width:260px}
+#pasteTable th:nth-child(5),#pasteTable td:nth-child(5){min-width:120px}
+#pasteTable th:nth-child(6),#pasteTable td:nth-child(6){min-width:140px}
+#pasteTable th:nth-child(7),#pasteTable td:nth-child(7){min-width:110px}
+#pasteTable th:nth-child(8),#pasteTable td:nth-child(8){min-width:105px}
+#pasteTable th:nth-child(9),#pasteTable td:nth-child(9){min-width:90px}
+#pasteTable input{width:100%;box-sizing:border-box;min-width:0}
+@media(max-width:800px){
+ .form-grid-3,.form-grid-2{grid-template-columns:1fr}
+}
+</style>
+</style>
+
+<style id="uniform-forms-v6">
+/* ===== حقول الإدخال والحذف: مقاس موحد + ترتيب مطابق للشيت ===== */
+.uniform-form-grid{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:16px 18px !important;
+  width:100% !important;
+  align-items:end !important;
+}
+.uniform-form-grid .field-card{width:100% !important;min-width:0 !important;box-sizing:border-box !important}
+.uniform-form-grid .field-card label{display:block !important;margin:0 0 6px !important;min-height:20px !important}
+.uniform-form-grid .field-card input,
+.uniform-form-grid .field-card select,
+.uniform-form-grid .field-card textarea{
+  display:block !important;
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  height:44px !important;
+  min-height:44px !important;
+  box-sizing:border-box !important;
+  margin:0 !important;
+}
+.uniform-form-grid .field-card textarea{resize:vertical !important}
+.compact-meta{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+.compact-meta .field-card:last-child{grid-column:1/-1 !important}
+.filter-grid{margin:0 !important}
+.users-form-grid,.users-filter-grid{margin:0 !important}
+@media(max-width:800px){
+  .uniform-form-grid,.compact-meta{grid-template-columns:1fr !important}
+  .compact-meta .field-card:last-child{grid-column:auto !important}
+}
+</style>
+
+<style id="user-password-v7">
+.user-password-cell{display:flex;align-items:center;gap:6px;min-width:190px}
+.user-password-cell input{flex:1;min-width:0}
+
+.user-row-actions{display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}.user-row-actions .btn-secondary{width:auto}.user-row-actions .reset-password-btn{width:auto;margin:0;padding:6px 9px}
+.reset-password-btn{background:var(--surface-2);border:1px solid var(--border);color:var(--amber-fg);padding:8px 10px;font-size:11.5px;white-space:nowrap;border-radius:8px}
+.reset-password-btn:hover{border-color:var(--amber);background:var(--surface)} .reset-password-btn:disabled{opacity:.55;cursor:wait}
+#uPassword{background:var(--surface-2);cursor:not-allowed}
+</style>
+<style id="combo-v6">
+.field-card select{width:100%;box-sizing:border-box;height:42px;min-height:42px;padding:0 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font:inherit;}
+.filter-grid .field-card select,.users-filter-grid .field-card select{width:100%;}
+</style>
+<style id="homepage-visual-only">
+/* ===== SY50RA Tools homepage visual theme — CSS ONLY ===== */
+:root{
+  --bg:#07111f;
+  --bg2:#0d1b2e;
+  --surface:rgba(18,34,56,.72);
+  --surface-2:rgba(10,24,40,.62);
+  --card:rgba(18,34,56,.72);
+  --border:rgba(255,255,255,.10);
+  --text:#f4f7fb;
+  --muted:#9eacc0;
+  --accent:#55a7ff;
+  --accent2:#7c5cff;
+  --shadow:0 24px 70px rgba(0,0,0,.35);
+  --amber:#55a7ff;
+  --amber-fg:#f4f7fb;
+  --mint:#55d6a0;
+  --mint-fg:#bff5df;
+  --red:#ff6b6b;
+  --red-fg:#ffd0d0;
+}
+html,body{min-height:100%;}
+body{
+  max-width:1120px !important;
+  padding:32px 24px 48px !important;
+  color:var(--text) !important;
+  font-family:Inter,'Segoe UI',Arial,sans-serif !important;
+  background:
+    radial-gradient(circle at 15% 10%,rgba(85,167,255,.18),transparent 28%),
+    radial-gradient(circle at 85% 15%,rgba(124,92,255,.16),transparent 30%),
+    linear-gradient(135deg,var(--bg),var(--bg2)) !important;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;z-index:-1;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:36px 36px;
+}
+.topbar{align-items:center !important;margin-bottom:4px;}
+h1{font-size:30px !important;line-height:1.25;margin:0 !important;font-weight:800;letter-spacing:-.5px;}
+.sub{color:var(--muted) !important;font-size:14px !important;margin:8px 0 24px !important;}
+.langBtn{
+  background:rgba(10,24,40,.72) !important;border:1px solid var(--border) !important;
+  color:var(--muted) !important;border-radius:12px !important;padding:9px 13px !important;
+  font-weight:700;font-size:13px;backdrop-filter:blur(16px);box-shadow:0 12px 35px rgba(0,0,0,.22);
+  transition:.2s;
+}
+.langBtn:hover{background:rgba(255,255,255,.10) !important;color:var(--text) !important;border-color:rgba(255,255,255,.16) !important;}
+.card{
+  position:relative;overflow:hidden;background:var(--card) !important;
+  border:1px solid var(--border) !important;border-radius:22px !important;
+  padding:26px !important;margin-bottom:18px !important;
+  backdrop-filter:blur(18px);box-shadow:var(--shadow) !important;
+}
+.card h2{font-size:15px !important;color:var(--text) !important;}
+.collapse-toggle{color:var(--text);}
+.collapse-arrow{color:var(--muted) !important;}
+.tabs{gap:6px !important;margin:-2px -2px 20px !important;border-bottom:1px solid var(--border) !important;}
+.tab-btn{
+  color:var(--muted) !important;padding:12px 16px !important;border-bottom:2px solid transparent !important;
+  transition:.2s;border-radius:10px 10px 0 0 !important;
+}
+.tab-btn:hover{color:var(--text) !important;background:rgba(255,255,255,.04);}
+.tab-btn.active{color:var(--text) !important;border-bottom-color:var(--accent) !important;background:rgba(85,167,255,.07);}
+label{color:var(--muted) !important;font-size:12.5px !important;}
+input[type=text],input[type=password],input[type=file],.field-card select{
+  border:1px solid var(--border) !important;border-radius:11px !important;
+  background:rgba(8,20,34,.62) !important;color:var(--text) !important;
+  padding:11px 13px !important;transition:.2s;
+}
+input:focus,.field-card select:focus{outline:none !important;border-color:rgba(85,167,255,.75) !important;box-shadow:0 0 0 3px rgba(85,167,255,.10);}
+.readonly-field{background:rgba(255,255,255,.045) !important;color:var(--muted) !important;}
+button{border-radius:11px !important;transition:.2s;}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2)) !important;color:#fff !important;
+  border:0 !important;box-shadow:0 10px 28px rgba(85,167,255,.18);width:100%;
+}
+.btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 14px 32px rgba(85,167,255,.24);}
+.btn-secondary{
+  background:rgba(255,255,255,.055) !important;border:1px solid var(--border) !important;
+  color:var(--text) !important;width:100%;
+}
+.btn-secondary:hover:not(:disabled){background:rgba(255,255,255,.09) !important;border-color:rgba(255,255,255,.17) !important;}
+.hint{color:var(--muted) !important;}
+.status{border-radius:11px !important;}
+.status.ok{background:rgba(61,220,151,.10) !important;border-color:rgba(61,220,151,.35) !important;color:#bff5df !important;}
+.status.err{background:rgba(255,107,107,.10) !important;border-color:rgba(255,107,107,.35) !important;color:#ffd0d0 !important;}
+.status.info{background:rgba(255,255,255,.045) !important;border-color:var(--border) !important;color:var(--muted) !important;}
+.preview,.data-table-wrap{border:1px solid var(--border) !important;border-radius:13px !important;background:rgba(7,17,31,.35);}
+.preview th,.data-table th,#pasteTable th{background:rgba(255,255,255,.055) !important;color:var(--muted) !important;border-color:var(--border) !important;}
+.preview td,.data-table td,#pasteTable td{border-color:var(--border) !important;}
+.data-table td input,#pasteTable input{color:var(--text) !important;}
+.data-table td input:focus,#pasteTable input:focus{background:rgba(85,167,255,.06) !important;border-color:rgba(85,167,255,.55) !important;}
+.paste-meta{background:rgba(255,255,255,.035) !important;border-color:var(--border) !important;border-radius:13px !important;}
+.reset-password-btn{background:rgba(255,255,255,.055) !important;border-color:var(--border) !important;color:#9ecbff !important;}
+.reset-password-btn:hover{background:rgba(255,255,255,.09) !important;border-color:rgba(85,167,255,.35) !important;}
+.tag.new{background:rgba(61,220,151,.12) !important;color:#bff5df !important;}
+.tag.update{background:rgba(85,167,255,.12) !important;color:#b9d9ff !important;}
+summary{color:var(--muted) !important;}
+@media(max-width:800px){
+  body{padding:22px 14px 36px !important;}
+  h1{font-size:24px !important;}
+  .card{padding:20px !important;border-radius:18px !important;}
+  .topbar{gap:12px;}
+  .langBtn{padding:8px 11px !important;}
+}
+/* Light theme remains available through any existing theme mechanism. */
+[data-theme="light"]{
+  --bg:#f3f7fc;--bg2:#e8eef7;--card:rgba(255,255,255,.78);--surface:rgba(255,255,255,.78);
+  --surface-2:rgba(245,248,252,.9);--border:rgba(18,35,58,.12);--text:#102033;--muted:#607086;
+  --shadow:0 24px 70px rgba(33,58,91,.14);--amber:#55a7ff;--amber-fg:#102033;
+}
+[data-theme="light"] body{background:radial-gradient(circle at 15% 10%,rgba(85,167,255,.15),transparent 28%),radial-gradient(circle at 85% 15%,rgba(124,92,255,.12),transparent 30%),linear-gradient(135deg,var(--bg),var(--bg2)) !important;}
+[data-theme="light"] body:before{opacity:.16;}
+[data-theme="light"] .langBtn{background:rgba(255,255,255,.78) !important;color:var(--muted) !important;}
+[data-theme="light"] input[type=text],[data-theme="light"] input[type=password],[data-theme="light"] input[type=file],[data-theme="light"] .field-card select{background:rgba(255,255,255,.86) !important;color:var(--text) !important;}
+[data-theme="light"] .btn-secondary{background:rgba(255,255,255,.72) !important;color:var(--text) !important;}
+</style>
+
+<style id="homepage-controls-visual">
+:root{--bg:#07111f;--bg2:#0d1b2e;--surface:rgba(18,34,56,.72);--surface-2:rgba(10,24,40,.62);--card:rgba(18,34,56,.72);--border:rgba(255,255,255,.10);--text:#f4f7fb;--muted:#9eacc0;--accent:#55a7ff;--accent2:#7c5cff;--shadow:0 24px 70px rgba(0,0,0,.35)}
+body{color:var(--text);background:radial-gradient(circle at 15% 10%,rgba(85,167,255,.18),transparent 28%),radial-gradient(circle at 85% 15%,rgba(124,92,255,.16),transparent 30%),linear-gradient(135deg,var(--bg),var(--bg2));font-family:Inter,Segoe UI,Arial,sans-serif;max-width:1120px;padding:22px 24px;position:relative}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:36px 36px;z-index:-1}
+.topbar{align-items:center}.topbar h1{font-size:30px;margin:6px 0 4px;font-weight:800;letter-spacing:-.4px}
+.page-controls{display:flex;gap:8px;padding:7px;border:1px solid var(--border);border-radius:16px;background:rgba(10,24,40,.72);backdrop-filter:blur(16px);box-shadow:0 12px 35px rgba(0,0,0,.22)}
+.control-btn{border:0!important;background:transparent!important;color:var(--muted)!important;cursor:pointer;padding:9px 12px;border-radius:11px;font-weight:700;font-size:13px;transition:.2s}
+.control-btn:hover,.control-btn.active{background:rgba(255,255,255,.10)!important;color:var(--text)!important}.langBtn{display:none!important}
+.card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:22px;margin-bottom:18px;backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+.tab-btn.active{color:var(--accent)!important;border-bottom-color:var(--accent)!important}
+input[type=text],input[type=password],input[type=file],.field-card select{background:var(--surface-2)!important;color:var(--text)!important;border-color:var(--border)!important;border-radius:12px!important}
+input:focus,.field-card select:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(85,167,255,.10)}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2))!important;color:#fff!important;border:0!important;border-radius:12px!important}.btn-secondary{background:rgba(255,255,255,.06)!important;color:var(--text)!important;border:1px solid var(--border)!important;border-radius:12px!important}
+[data-theme="light"]{--bg:#f3f7fc;--bg2:#e8eef7;--surface:rgba(255,255,255,.78);--surface-2:rgba(246,249,253,.92);--card:rgba(255,255,255,.78);--border:rgba(18,35,58,.12);--text:#102033;--muted:#607086;--shadow:0 24px 70px rgba(33,58,91,.14)}
+[data-theme="light"] .page-controls{background:rgba(255,255,255,.78)}
+@media(max-width:700px){.topbar{align-items:flex-start}.topbar h1{font-size:23px}.page-controls{flex-shrink:0}}
+</style>
+
+<style id="side-control-style">
+.side-control-handle{position:fixed;top:10px;right:0;z-index:99999;width:34px;height:34px;border-radius:12px 0 0 12px;border:1px solid rgba(255,255,255,.12);background:rgba(10,24,40,.82);color:var(--text,#f4f7fb);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;line-height:1;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25);backdrop-filter:blur(14px);user-select:none;touch-action:none;transition:background .2s ease,box-shadow .2s ease,transform .2s ease}
+.side-control-handle:hover{background:rgba(18,34,56,.95);box-shadow:0 10px 28px rgba(0,0,0,.32)}
+.side-control-panel{position:fixed;top:10px;right:42px;z-index:99998;display:flex;gap:6px;padding:6px;border:1px solid var(--border,rgba(255,255,255,.1));border-radius:14px;background:rgba(10,24,40,.82);backdrop-filter:blur(16px);box-shadow:0 12px 35px rgba(0,0,0,.25);opacity:0;visibility:hidden;pointer-events:none;transform:translateX(8px);transition:.18s ease}
+.side-control-panel.controls-open{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(0)}
+.side-control-panel .control-btn{margin:0!important;border:0!important;background:transparent!important;color:var(--muted)!important;box-shadow:none!important;transform:none!important;cursor:pointer;padding:8px 10px!important;border-radius:10px!important;font-weight:700!important;font-size:12px!important;white-space:nowrap}
+.side-control-panel .control-btn:hover,.side-control-panel .control-btn.active{background:rgba(255,255,255,.10)!important;color:var(--text)!important}
+html[data-theme="light"] .side-control-handle,html[data-theme="light"] .side-control-panel{background:rgba(255,255,255,.86);color:var(--text)}
+html[data-theme="light"] .side-control-panel .control-btn:hover,html[data-theme="light"] .side-control-panel .control-btn.active{background:rgba(18,35,58,.08)!important}
+</style>
+</head>
+<body>
+<div id="sideControlHandle" class="side-control-handle" aria-label="Controls" title="Click to open • Long press and drag to move">⋮</div>
+<div id="sideControlPanel" class="side-control-panel" aria-label="Page controls">
+  <button class="control-btn" id="enBtn" type="button" onclick="setLanguage('en')">EN</button>
+  <button class="control-btn" id="arBtn" type="button" onclick="setLanguage('ar')">عربي</button>
+  <button class="control-btn" id="themeBtn" type="button" onclick="toggleTheme()">☀️ / 🌙</button>
+</div>
+
+<div class="topbar">
+  <h1>📦 إدارة بيانات Warehouse Scanner</h1>
+</div>
+<div class="sub">أداة مستقلة لإدارة FileUploade.csv و users.csv مباشرة على GitHub.</div>
+
+<div class="card">
+  <button class="collapse-toggle" onclick="toggleGhSection()">
+    <h2 style="margin:0;">⚙️ الاتصال بـ GitHub</h2><span class="collapse-arrow" id="ghSectionArrow">▾</span>
+  </button>
+  <div id="ghSectionBody">
+    <label>اسم المستخدم/المنظمة (Owner)</label><input type="text" id="ghOwner" value="sysorapro">
+    <div class="row"><div><label>اسم الريبو (Repo)</label><input type="text" id="ghRepo" value="warehouse-scanner-Data"></div>
+    <div><label>الفرع (Branch)</label><input type="text" id="ghBranch" value="main"></div></div>
+    <label>مسار الملف</label><input type="text" id="ghPath" value="FileUploade.csv">
+    <label>مفتاح الوصول (Personal Access Token)</label><input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+    <div class="hint">استخدم Token بصلاحية Contents: Read and write على الريبو المطلوب فقط.</div>
+    <div class="check-row"><input type="checkbox" id="rememberToken"><label style="margin:0" for="rememberToken">احفظ الإعدادات دي على الجهاز ده بس (اختياري)</label></div>
+    <button class="btn-secondary" onclick="testConnection()">🔌 اختبار الاتصال</button>
+    <div class="status" id="connStatus"></div>
+  </div>
+</div>
+
+<div class="status" id="actionStatus" style="margin:10px 0"></div>
+
+<div class="card">
+  <div class="tabs">
+    <button class="tab-btn active" data-main="file" onclick="mainTab('file')">📄 FileUploade</button>
+    <button class="tab-btn" data-main="users" onclick="mainTab('users')">👤 Users</button>
+  </div>
+
+  <div id="fileSection" class="main-panel">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="subTab('fileAdd',this)">➕ إضافة</button>
+      <button class="tab-btn" onclick="subTab('filePaste',this)">📋 لصق من إكسل</button>
+      <button class="tab-btn" onclick="subTab('fileEdit',this)">✏️ تعديل / حذف</button>
+    </div>
+
+    <div id="fileAdd" class="tab-panel active">
+      <div class="uniform-form-grid">
+        <div class="field-card"><label>Department</label><select id="fDepartment"><option value="">اختر القسم</option><option value="NonPharma">NonPharma</option><option value="Pharma">Pharma</option></select></div>
+        <div class="field-card"><label>SheetNo. <small>(تلقائي)</small></label><input type="text" id="fSheetNo" class="readonly-field" readonly></div>
+        <div class="field-card"><label>SheetName</label><input type="text" id="fSheetName"></div>
+        <div class="field-card"><label>Item Code</label><input type="text" id="fItemCode"></div>
+        <div class="field-card"><label>Item Name</label><input type="text" id="fItemName"></div>
+        <div class="field-card"><label>Trans.Status</label><input type="text" id="fStatus"></div>
+        <div class="field-card"><label>PersonalName</label><input type="text" id="fPersonal"></div>
+        <div class="field-card"><label>Trans.Date</label><input type="text" id="fDate"></div>
+        <div class="field-card"><label>Trans.Time</label><input type="text" id="fTime"></div>
+      </div>
+      <button class="btn-primary" onclick="addFile()">💾 إضافة ورفع على GitHub</button>
+      <div class="status" id="fileAddStatus"></div>
+    </div>
+
+    <div id="filePaste" class="tab-panel">
+      <div class="hint">كل عملية لصق تعتبر <b>رفعة واحدة</b>. أدخل بيانات الرفعة مرة واحدة، ثم الصق الأصناف أسفلها. سيتم وضع نفس Department وSheetName على كل السجلات، وسيتم توليد SheetNo من 10 أحرف/أرقام تلقائيًا بدون تكرار.</div>
+      <div class="paste-meta">
+        <div class="hint-title">بيانات الرفعة</div>
+        <div class="uniform-form-grid compact-meta">
+          <div class="field-card"><label>Department</label><select id="pDepartment"><option value="">اختر القسم</option><option value="NonPharma">NonPharma</option><option value="Pharma">Pharma</option></select></div>
+          <div class="field-card"><label>SheetNo. <small>(تلقائي)</small></label><input type="text" id="pSheetNo" class="readonly-field" readonly></div>
+          <div class="field-card"><label>SheetName</label><input type="text" id="pSheetName"></div>
+        </div>
+      </div>
+      <div class="hint" style="margin-top:10px">الصق من Excel ابتداءً من <b>Item Code</b> وحتى <b>Trans.Time</b>. لا تحتاج إلى نسخ Department أو SheetNo أو SheetName.</div>
+      <div id="pasteTableWrap" style="overflow-x:auto;margin-top:12px">
+        <table id="pasteTable"><thead><tr><th>#</th><th>Item Code</th><th>Item Name</th><th>Trans.Status</th><th>PersonalName</th><th>Trans.Date</th><th>Trans.Time</th><th></th></tr></thead><tbody id="pasteBody"></tbody></table>
+      </div>
+      <div class="row" style="margin-top:10px"><button class="btn-secondary" style="margin-top:0" onclick="addPasteRow()">➕ سطر جديد</button><button class="btn-secondary" style="margin-top:0" onclick="clearPaste()">🗑 مسح الكل</button></div>
+      <button class="btn-primary" onclick="savePaste()">💾 معاينة وحفظ</button>
+      <div class="status" id="pasteStatus"></div>
+    </div>
+
+    <div id="fileEdit" class="tab-panel">
+      <div class="uniform-form-grid filter-grid">
+        <div class="field-card"><label>Department</label><select id="qDepartment" onchange="renderFile()"><option value="">الكل</option></select></div>
+        <div class="field-card"><label>SheetNo.</label><select id="qSheetNo" onchange="renderFile()"><option value="">الكل</option></select></div>
+        <div class="field-card"><label>Item Code</label><select id="qItemCode" onchange="renderFile()"><option value="">الكل</option></select></div>
+        <div class="field-card"><label>Trans.Status</label><select id="qStatus" onchange="renderFile()"><option value="">الكل</option></select></div>
+      </div>
+      <div class="action-row"><button class="btn-secondary" onclick="loadFile()">🔄 تحميل البيانات</button><button class="btn-secondary" onclick="selectAll('file')">☑️ تحديد الكل</button></div>
+      <button class="btn-primary" style="background:var(--red);color:#fff" onclick="deleteSelected('file')">🗑 حذف المحدد</button>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin:12px 0"><button class="btn-primary" type="button" onclick="saveAllFile()" style="width:auto;margin-top:0">💾 حفظ مجمع</button><button class="btn-secondary" type="button" onclick="resetSelectedFile()" style="width:auto;margin-top:0">↻ Reset المحدد</button></div>
+      <div id="fileTable" class="data-table-wrap"></div>
+    </div>
+  </div>
+
+  <div id="usersSection" class="main-panel" style="display:none">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="subTab('userAdd',this)">➕ إضافة</button>
+      <button class="tab-btn" onclick="subTab('userEdit',this)">✏️ تعديل / حذف</button>
+    </div>
+    <div id="userAdd" class="tab-panel active">
+      <div class="uniform-form-grid users-form-grid">
+        <div class="field-card"><label>UserName</label><input type="text" id="uUser"></div>
+        <div class="field-card"><label>Employee Name</label><input type="text" id="uEmployee"></div>
+        <div class="field-card"><label>Department</label><select id="uDepartment"><option value="">اختر القسم</option><option value="NonPharma">NonPharma</option><option value="Pharma">Pharma</option></select></div>
+        <div class="field-card"><label>Job Titel</label><input type="text" id="uJob"></div>
+        <div class="field-card"><label>Password</label><input type="password" id="uPassword" value="00000" readonly></div>
+        <div class="field-card"><label>Status</label><input type="text" id="uStatus"></div>
+        <div class="field-card"><label>Type</label><input type="text" id="uType"></div>
+      </div>
+      <button class="btn-primary" onclick="addUser()">💾 إضافة ورفع على GitHub</button>
+      <div class="status" id="userAddStatus"></div>
+    </div>
+    <div id="userEdit" class="tab-panel">
+      <div class="uniform-form-grid filter-grid users-filter-grid">
+        <div class="field-card"><label>UserName</label><select id="uqUserName" onchange="renderUsers()"><option value="">الكل</option></select></div>
+        <div class="field-card"><label>Employee Name</label><select id="uqEmployee" onchange="renderUsers()"><option value="">الكل</option></select></div>
+        <div class="field-card"><label>Department</label><select id="uqDepartment" onchange="renderUsers()"><option value="">الكل</option></select></div>
+        <div class="field-card"><label>Job Titel</label><select id="uqJob" onchange="renderUsers()"><option value="">الكل</option></select></div>
+        <div class="field-card"><label>Status</label><select id="uqStatus" onchange="renderUsers()"><option value="">الكل</option></select></div>
+        <div class="field-card"><label>Type</label><select id="uqType" onchange="renderUsers()"><option value="">الكل</option></select></div>
+      </div>
+      <div class="action-row"><button class="btn-secondary" onclick="loadUsers()">🔄 تحميل البيانات</button><button class="btn-secondary" onclick="selectAll('users')">☑️ تحديد الكل</button></div>
+      <button class="btn-primary" style="background:var(--red);color:#fff" onclick="deleteSelected('users')">🗑 حذف المحدد</button>
+      <div id="userTable" class="data-table-wrap"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const FILE='FileUploade.csv',USERS='users.csv';
+const FH=['Department','SheetNo.','SheetName','Item Code','Item Name','Trans.Status','PersonalName','Trans.Date','Trans.Time'];
+const UH=['UserName','Employee Name','Department','Job Titel','Password','Status','Type'];
+let fr=[],ur=[],fsha='',usha='';
+
+document.addEventListener('DOMContentLoaded',()=>{
+  // قسم الاتصال بـ GitHub يكون مقفول تلقائيًا عند فتح الصفحة، ويمكن فتحه يدويًا بالضغط على العنوان.
+  const ghBody=document.getElementById('ghSectionBody');
+  const ghArrow=document.getElementById('ghSectionArrow');
+  if(ghBody) ghBody.classList.add('closed');
+  if(ghArrow) ghArrow.classList.add('closed');
+  loadSettings();
+  const ids=['ghOwner','ghRepo','ghBranch','ghPath','ghToken'];
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>saveSettings(false))});
+  const remember=document.getElementById('rememberToken');
+  if(remember)remember.addEventListener('change',()=>saveSettings(true));
+  const active=document.querySelector('[data-main].active');
+  if(active){const x=active.dataset.main;const p=document.getElementById('ghPath');if(p)p.value=x==='users'?USERS:FILE;saveSettings(false)}
+});
+function toggleGhSection(){const b=document.getElementById('ghSectionBody'),a=document.getElementById('ghSectionArrow');b.classList.toggle('closed');a.classList.toggle('closed')}
+function mainTab(x){document.querySelectorAll('[data-main]').forEach(b=>b.classList.toggle('active',b.dataset.main===x));fileSection.style.display=x==='file'?'block':'none';usersSection.style.display=x==='users'?'block':'none';const p=document.getElementById('ghPath');if(p)p.value=x==='users'?USERS:FILE;saveSettings(false)}
+function subTab(id,btn){const p=btn.closest('.main-panel');p.querySelectorAll('.tabs .tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');p.querySelectorAll(':scope>.tab-panel').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active')}
+const SETTINGS_KEY='warehouse_scanner_admin_settings_v1';
+function saveSettings(force=true){
+  const remember=document.getElementById('rememberToken');
+  if(!remember)return;
+  if(!remember.checked){
+    if(force) localStorage.removeItem(SETTINGS_KEY);
+    return;
+  }
+  const data={owner:ghOwner.value.trim(),repo:ghRepo.value.trim(),branch:ghBranch.value.trim()||'main',path:ghPath.value.trim(),token:ghToken.value.trim()};
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(data));
+}
+function loadSettings(){
+  try{
+    const raw=localStorage.getItem(SETTINGS_KEY);if(!raw)return;
+    const d=JSON.parse(raw)||{};
+    if(d.owner)ghOwner.value=d.owner;
+    if(d.repo)ghRepo.value=d.repo;
+    if(d.branch)ghBranch.value=d.branch;
+    if(d.path)ghPath.value=d.path;
+    if(d.token)ghToken.value=d.token;
+    rememberToken.checked=true;
+  }catch(e){localStorage.removeItem(SETTINGS_KEY)}
+}
+function cfg(){return{owner:ghOwner.value.trim(),repo:ghRepo.value.trim(),branch:ghBranch.value.trim()||'main',token:ghToken.value.trim()}}
+function H(){let h={'Accept':'application/vnd.github+json'};if(cfg().token)h.Authorization='Bearer '+cfg().token;return h}
+function show(id,t,c='info'){const x=document.getElementById(id);x.textContent=t;x.className='status show '+c}
+function enc(s){const b=new TextEncoder().encode(s);let x='';b.forEach(v=>x+=String.fromCharCode(v));return btoa(x)}
+function dec(s){const x=atob(s.replace(/\n/g,''));return new TextDecoder().decode(Uint8Array.from(x,c=>c.charCodeAt(0)))}
+function parseCSV(t){
+  t = String(t||'').replace(/^\uFEFF/, '');
+  let a=[],r=[],c='',q=false;
+  for(let i=0;i<t.length;i++){
+    let x=t[i],n=t[i+1];
+    if(x=='"'&&q&&n=='"'){c+='"';i++}
+    else if(x=='"')q=!q;
+    else if(x==','&&!q){r.push(c);c=''}
+    else if((x=='\n'||x=='\r')&&!q){
+      if(x=='\r'&&n=='\n')i++;
+      r.push(c);
+      if(r.some(v=>String(v).trim()!==''))a.push(r);
+      r=[];c=''
+    }else c+=x
+  }
+  if(c!==''||r.length){
+    r.push(c);
+    if(r.some(v=>String(v).trim()!==''))a.push(r)
+  }
+  if(!a.length)return[];
+  let h=a.shift().map(k=>String(k||'').replace(/^\uFEFF/,'').trim());
+  return a.map(v=>{
+    let o={};
+    h.forEach((k,i)=>o[k]=(v[i]??'').trim());
+    return o
+  })
+}
+function ce(v){v=String(v??'');return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
+function csv(rows,h){return h.join(',')+'\r\n'+rows.map(r=>h.map(k=>ce(r[k])).join(',')).join('\r\n')+'\r\n'}
+async function get(path){let u=`https://api.github.com/repos/${encodeURIComponent(cfg().owner)}/${encodeURIComponent(cfg().repo)}/contents/${path}?ref=${encodeURIComponent(cfg().branch)}`;let r=await fetch(u,{headers:H()});if(!r.ok)throw Error(await r.text());let j=await r.json();return{rows:parseCSV(dec(j.content)),sha:j.sha}}
+async function put(path,rows,h,sha,message){let u=`https://api.github.com/repos/${encodeURIComponent(cfg().owner)}/${encodeURIComponent(cfg().repo)}/contents/${path}`;let r=await fetch(u,{method:'PUT',headers:{...H(),'Content-Type':'application/json'},body:JSON.stringify({message,content:enc(csv(rows,h)),branch:cfg().branch,sha})});if(!r.ok)throw Error(await r.text());return r.json()}
+async function testConnection(){try{let r=await fetch(`https://api.github.com/repos/${cfg().owner}/${cfg().repo}`,{headers:H()});if(!r.ok)throw Error(await r.text());show('connStatus','تم الاتصال بـ GitHub بنجاح','ok')}catch(e){show('connStatus','فشل الاتصال: '+e.message,'err')}}
+async function loadFile(){try{let x=await get(FILE);fr=x.rows;fsha=x.sha;renderFile();show('actionStatus','تم تحميل FileUploade.csv — '+fr.length+' سجل','ok')}catch(e){show('actionStatus','خطأ: '+e.message,'err')}}
+async function loadUsers(){try{let x=await get(USERS);ur=x.rows;usha=x.sha;renderUsers();show('actionStatus','تم تحميل users.csv — '+ur.length+' مستخدم','ok')}catch(e){show('actionStatus','خطأ: '+e.message,'err')}}
+function generateSheetNo(){const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';let v='';do{v='';for(let i=0;i<10;i++)v+=chars[Math.floor(Math.random()*chars.length)]}while(fr.some(r=>String(r['SheetNo.']??'')===v));return v}
+function refreshGeneratedSheetNo(){const x=generateSheetNo();const a=document.getElementById('fSheetNo');const b=document.getElementById('pSheetNo');if(a)a.value=x;if(b)b.value=x}
+function addFile(){let o={};o.Department=fDepartment.value.trim();o['SheetNo.']=fSheetNo.value.trim()||generateSheetNo();o.SheetName=fSheetName.value.trim();o['Item Code']=fItemCode.value.trim();o['Item Name']=fItemName.value.trim();o['Trans.Status']=fStatus.value.trim();o.PersonalName=fPersonal.value.trim();o['Trans.Date']=fDate.value.trim();o['Trans.Time']=fTime.value.trim();if(!o.Department)return alert('Department مطلوب');if(!o.SheetName)return alert('SheetName مطلوب');if(!o['Item Code'])return alert('Item Code مطلوب');fr.push(o);saveFile('إضافة سجل إلى FileUploade.csv','fileAddStatus')}
+async function saveFile(m,s){try{let x=await put(FILE,fr,FH,fsha,m);fsha=x.content.sha;show(s,'تم الحفظ على GitHub بنجاح','ok');refreshGeneratedSheetNo()}catch(e){show(s,'خطأ: '+e.message,'err')}}
+function addUser(){let ids=['uUser','uEmployee','uDepartment','uJob','uPassword','uStatus','uType'],o={};UH.forEach((h,i)=>o[h]=document.getElementById(ids[i]).value.trim());o.Password='00000';document.getElementById('uPassword').value='00000';if(!o.UserName)return alert('UserName مطلوب');ur.push(o);saveUsers('إضافة مستخدم إلى users.csv','userAddStatus')}
+async function saveUsers(m,s){try{const latest=await get(USERS);const latestRows=latest.rows||[];const newUser=ur[ur.length-1];if(!newUser)throw Error('بيانات المستخدم غير موجودة');const key=v=>String(v??'').trim().toLowerCase();const idx=latestRows.findIndex(r=>key(r.UserName)===key(newUser.UserName));if(idx>=0)latestRows[idx]=newUser;else latestRows.push(newUser);const x=await put(USERS,latestRows,UH,latest.sha,m);ur=latestRows;usha=x.content.sha;renderUsers();show(s,'تم الحفظ على GitHub بنجاح','ok')}catch(e){show(s,'خطأ: '+e.message,'err')}}
+function addPasteRow(data={}){let tr=document.createElement('tr');let n=document.querySelectorAll('#pasteBody tr').length+1;const PH=['Item Code','Item Name','Trans.Status','PersonalName','Trans.Date','Trans.Time'];tr.innerHTML='<td>'+n+'</td>'+PH.map(h=>'<td><input data-h="'+h.replace(/"/g,'&quot;')+'" value="'+String(data[h]||'').replace(/"/g,'&quot;')+'"></td>').join('')+'<td><button class="rowDelBtn" onclick="this.closest(\'tr\').remove()">✕</button></td>';document.getElementById('pasteBody').appendChild(tr)}
+document.getElementById('pasteTable').addEventListener('paste',e=>{let txt=e.clipboardData.getData('text/plain');if(!txt.includes('\t'))return;e.preventDefault();clearPaste();txt.trim().split(/\r?\n/).forEach(line=>{let c=line.split('\t'),o={};['Item Code','Item Name','Trans.Status','PersonalName','Trans.Date','Trans.Time'].forEach((h,i)=>o[h]=(c[i]||'').trim());addPasteRow(o)})})
+function clearPaste(){document.getElementById('pasteBody').innerHTML=''}
+async function savePaste(){let dep=pDepartment.value.trim(),sn=pSheetNo.value.trim()||generateSheetNo(),name=pSheetName.value.trim();if(!dep)return alert('Department مطلوب');if(!name)return alert('SheetName مطلوب');let rows=[...document.querySelectorAll('#pasteBody tr')].map(tr=>{let o={};tr.querySelectorAll('input').forEach(i=>o[i.dataset.h]=i.value.trim());o.Department=dep;o['SheetNo.']=sn;o.SheetName=name;return o}).filter(o=>o['Item Code']||o['Item Name']||o['Trans.Status']||o.PersonalName||o['Trans.Date']||o['Trans.Time']);if(!rows.length)return alert('لا توجد بيانات');fr.push(...rows);await saveFile('Paste data into FileUploade.csv','pasteStatus');clearPaste();refreshGeneratedSheetNo()}
+function uniqueValues(rows,key){return [...new Set(rows.map(r=>String(r[key]??'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'}))}
+function fillFilter(id,values){const el=document.getElementById(id);if(!el)return;const old=el.value;el.innerHTML='<option value="">الكل</option>'+values.map(v=>'<option value="'+String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')+'">'+String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</option>').join('');if(values.includes(old))el.value=old;}
+function refreshFileFilters(){fillFilter('qDepartment',uniqueValues(fr,'Department'));fillFilter('qSheetNo',uniqueValues(fr,'SheetNo.'));fillFilter('qItemCode',uniqueValues(fr,'Item Code'));fillFilter('qStatus',uniqueValues(fr,'Trans.Status'))}
+function refreshUserFilters(){fillFilter('uqUserName',uniqueValues(ur,'UserName'));fillFilter('uqEmployee',uniqueValues(ur,'Employee Name'));fillFilter('uqDepartment',uniqueValues(ur,'Department'));fillFilter('uqJob',uniqueValues(ur,'Job Titel'));fillFilter('uqStatus',uniqueValues(ur,'Status'));fillFilter('uqType',uniqueValues(ur,'Type'))}
+function renderFile(){
+  fr.forEach(r=>{if(r['SheetNo.']===undefined){const k=Object.keys(r).find(x=>String(x).replace(/^\uFEFF/,'').trim()==='SheetNo.');if(k)r['SheetNo.']=r[k];else{const oldKey=Object.keys(r).find(x=>String(x).replace(/^\uFEFF/,'').trim()==='SheetNo');if(oldKey)r['SheetNo.']=r[oldKey]}}});
+  refreshFileFilters();
+  const d=qDepartment.value,s=qSheetNo.value,c=qItemCode.value,st=qStatus.value;
+  const rows=fr.map((r,i)=>[r,i]).filter(([r])=>(!d||String(r.Department??'')===d)&&(!s||String(r['SheetNo.']??'')===s)&&(!c||String(r['Item Code']??'')===c)&&(!st||String(r['Trans.Status']??'')===st));
+  fileTable.innerHTML=table(rows,FH,'file')
+}
+function renderUsers(){
+  refreshUserFilters();
+  const f={UserName:uqUserName.value,'Employee Name':uqEmployee.value,Department:uqDepartment.value,'Job Titel':uqJob.value,Status:uqStatus.value,Type:uqType.value};
+  const rows=ur.map((r,i)=>[r,i]).filter(([r])=>Object.keys(f).every(k=>!f[k]||String(r[k]??'')===f[k]));
+  userTable.innerHTML=table(rows,UH,'users')
+}
+function table(rows,h,type){let s='<table class="data-table"><thead><tr><th><input class="check" type="checkbox" onclick="toggleVisible(\''+type+'\',this)"></th>'+h.map(x=>'<th>'+x+'</th>').join('')+'<th>حفظ</th></tr></thead><tbody>';rows.forEach(([r,i])=>{s+='<tr><td><input class="check sel-'+type+'" data-i="'+i+'" type="checkbox"></td>'+h.map(x=>{if(type==='users'&&x==='Password')return '<td><input type="password" value="********" readonly autocomplete="new-password"></td>';return '<td><input data-i="'+i+'" data-h="'+x.replace(/"/g,'&quot;')+'" value="'+String(r[x]??'').replace(/"/g,'&quot;')+'"></td>';}).join('')+'<td><div class="user-row-actions"><button class="btn-secondary" style="margin:0;padding:6px 9px" onclick="saveOne(\''+type+'\','+i+')">💾 حفظ</button>'+(type==='users'?'<button type="button" class="reset-password-btn" onclick="resetUserPassword('+i+')">↻ Reset</button>':'<button type="button" class="reset-password-btn" onclick="resetFileRow('+i+')">↻ Reset</button>')+'</div></td></tr>'});return s+'</tbody></table>'}
+function sync(type,i){let a=type==='file'?fr:ur;document.querySelectorAll('[data-i="'+i+'"][data-h]').forEach(x=>a[i][x.dataset.h]=x.value.trim())}
+async function resetUserPassword(i){
+  const u=ur[i];
+  if(!u)return;
+  const userName=String(u.UserName||'').trim();
+  if(!userName)return alert('لا يمكن عمل Reset بدون UserName');
+  if(!confirm('هل تريد عمل Reset لكلمة مرور المستخدم '+userName+' إلى 00000؟'))return;
+
+  try{
+    show('actionStatus','جاري تحديث كلمة المرور على users.csv...','info');
+
+    // نقرأ آخر نسخة من GitHub أولاً حتى لا نعتمد على SHA قديم.
+    const latest=await get(USERS);
+    const rows=latest.rows;
+    const idx=rows.findIndex(r=>String(r.UserName||'').trim()===userName);
+
+    if(idx<0)throw Error('المستخدم غير موجود في users.csv على GitHub');
+
+    rows[idx].Password='00000';
+
+    // تحديث users.csv مباشرة من زر Reset.
+    const result=await put(USERS,rows,UH,latest.sha,'Reset password for '+userName);
+    usha=result.content.sha;
+
+    // تحديث البيانات المحلية من النسخة التي تم حفظها.
+    ur=rows;
+    renderUsers();
+
+    show('actionStatus','تم Reset كلمة مرور المستخدم '+userName+' إلى 00000 وتحديث users.csv مباشرة على GitHub.','ok');
+  }catch(e){
+    show('actionStatus','خطأ في Reset: '+e.message,'err');
+    alert('فشل Reset\n\n'+e.message);
+  }
+}
+async function saveOne(type,i){
+  if(type==='file'){
+    sync(type,i);
+    try{let x=await put(FILE,fr,FH,fsha,'Update FileUploade.csv');fsha=x.content.sha;renderFile();show('actionStatus','تم حفظ التعديل بنجاح','ok')}
+    catch(e){show('actionStatus','خطأ: '+e.message,'err')}
+    return;
+  }
+  const oldRow=ur[i]?{...ur[i]}:null;
+  if(!oldRow)return;
+  const edited={...oldRow};
+  document.querySelectorAll('[data-i="'+i+'"][data-h]').forEach(x=>edited[x.dataset.h]=x.value.trim());
+  const oldUserName=String(oldRow.UserName||'').trim().toLowerCase();
+  const key=v=>String(v??'').trim().toLowerCase();
+  try{
+    let lastErr;
+    for(let attempt=1;attempt<=3;attempt++){
+      const latest=await get(USERS);
+      const rows=latest.rows||[];
+      const idx=rows.findIndex(r=>key(r.UserName)===oldUserName);
+      if(idx<0)throw Error('المستخدم لم يعد موجودًا في users.csv على GitHub');
+      rows[idx]=edited;
+      try{
+        const x=await put(USERS,rows,UH,latest.sha,'Update users.csv');
+        ur=rows;usha=x.content.sha;renderUsers();show('actionStatus','تم حفظ التعديل بنجاح','ok');return;
+      }catch(e){lastErr=e;if(!String(e.message||e).includes('409')||attempt===3)throw e;}
+    }
+    throw lastErr||Error('فشل الحفظ');
+  }catch(e){show('actionStatus','خطأ: '+e.message,'err')}
+}
+function syncAll(type){document.querySelectorAll('.data-table tbody tr').forEach(tr=>{const cb=tr.querySelector('.sel-'+type);if(!cb)return;sync(type,+cb.dataset.i)})}
+async function saveAllFile(){
+  try{
+    syncAll('file');
+    let x=await put(FILE,fr,FH,fsha,'Bulk update FileUploade.csv');
+    fsha=x.content.sha;
+    renderFile();
+    show('actionStatus','تم حفظ جميع تعديلات FileUploade بنجاح','ok');
+  }catch(e){show('actionStatus','خطأ أثناء الحفظ المجمع: '+e.message,'err')}
+}
+async function resetFileRow(i){
+  if(!fr[i])return;
+  sync('file',i);
+  if(!confirm('سيتم مسح Trans.Status و PersonalName و Trans.Date و Trans.Time لهذا السجل وحفظ التعديل على FileUploade.csv. هل تريد المتابعة؟'))return;
+  try{
+    fr[i]['Trans.Status']='';
+    fr[i]['PersonalName']='';
+    fr[i]['Trans.Date']='';
+    fr[i]['Trans.Time']='';
+    let x=await put(FILE,fr,FH,fsha,'Reset FileUploade record');
+    fsha=x.content.sha;
+    renderFile();
+    show('actionStatus','تم Reset السجل ومسح الحقول الأربعة وحفظ FileUploade.csv بنجاح','ok');
+  }catch(e){show('actionStatus','خطأ أثناء Reset: '+e.message,'err')}
+}
+async function resetSelectedFile(){
+  const ids=[...document.querySelectorAll('.sel-file:checked')].map(x=>+x.dataset.i);
+  if(!ids.length)return alert('اختر السجلات أولاً');
+  ids.forEach(i=>sync('file',i));
+  if(!confirm('سيتم مسح Trans.Status و PersonalName و Trans.Date و Trans.Time للسجلات المحددة وحفظ التعديل على FileUploade.csv. هل تريد المتابعة؟'))return;
+  try{
+    ids.forEach(i=>{if(!fr[i])return;fr[i]['Trans.Status']='';fr[i]['PersonalName']='';fr[i]['Trans.Date']='';fr[i]['Trans.Time']=''});
+    let x=await put(FILE,fr,FH,fsha,'Reset FileUploade records');
+    fsha=x.content.sha;
+    renderFile();
+    show('actionStatus','تم Reset السجلات المحددة ومسح الحقول الأربعة وحفظ FileUploade.csv بنجاح','ok');
+  }catch(e){show('actionStatus','خطأ أثناء Reset: '+e.message,'err')}
+}
+function toggleVisible(type,cb){document.querySelectorAll('.sel-'+type).forEach(x=>x.checked=cb.checked)}
+function selectAll(type){document.querySelectorAll('.sel-'+type).forEach(x=>x.checked=true)}
+async function deleteSelected(type){
+  const ids=[...document.querySelectorAll('.sel-'+type+':checked')].map(x=>+x.dataset.i);
+  if(!ids.length)return alert('اختر السجلات أولاً');
+  if(!confirm('هل تريد حذف السجلات المحددة؟'))return;
+  const set=new Set(ids);
+  try{
+    if(type==='file'){
+      fr=fr.filter((_,i)=>!set.has(i));
+      let x=await put(FILE,fr,FH,fsha,'Delete records from FileUploade.csv');
+      fsha=x.content.sha;renderFile();show('actionStatus','تم الحذف بنجاح','ok');return;
+    }
+    const key=v=>String(v??'').trim().toLowerCase();
+    const names=new Set(ids.map(i=>key(ur[i]?.UserName)).filter(Boolean));
+    let lastErr;
+    for(let attempt=1;attempt<=3;attempt++){
+      const latest=await get(USERS);
+      const rows=(latest.rows||[]).filter(r=>!names.has(key(r.UserName)));
+      try{
+        const x=await put(USERS,rows,UH,latest.sha,'Delete users from users.csv');
+        ur=rows;usha=x.content.sha;renderUsers();show('actionStatus','تم الحذف بنجاح','ok');return;
+      }catch(e){lastErr=e;if(!String(e.message||e).includes('409')||attempt===3)throw e;}
+    }
+    throw lastErr||Error('فشل الحذف');
+  }catch(e){show('actionStatus','خطأ: '+e.message,'err')}
+}
+function setLanguage(nextLang){
+  const lang=nextLang==='en'?'en':'ar';
+  document.documentElement.lang=lang;
+  document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+  localStorage.setItem('sysora_language',lang);
+  const en=document.getElementById('enBtn'), ar=document.getElementById('arBtn');
+  if(en)en.classList.toggle('active',lang==='en');
+  if(ar)ar.classList.toggle('active',lang==='ar');
+}
+function toggleTheme(){
+  const next=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',next);
+  localStorage.setItem('sysora_theme',next);
+}
+function applyPagePreferences(){
+  const lang=localStorage.getItem('sysora_language')||'ar';
+  const theme=localStorage.getItem('sysora_theme')||'dark';
+  document.documentElement.setAttribute('data-theme',theme);
+  setLanguage(lang);
+}
+applyPagePreferences();
+function toggleLang(){setLanguage(document.documentElement.lang==='ar'?'en':'ar')}
+for(let i=0;i<5;i++)addPasteRow();
+refreshGeneratedSheetNo();
+</script>
+
+<script id="side-control-js">
+(function(){
+ const h=document.getElementById('sideControlHandle'),p=document.getElementById('sideControlPanel'); if(!h||!p)return;
+ const key='sy50ra-controls-position';
+ try{const v=JSON.parse(localStorage.getItem(key)||'null');if(v&&Number.isFinite(v.top)&&Number.isFinite(v.right)){h.style.top=v.top+'px';h.style.right=v.right+'px';}}catch(e){}
+ function place(){const r=h.getBoundingClientRect();let right=Math.max(8,window.innerWidth-r.left+8);let top=Math.max(8,r.top);p.style.top=top+'px';p.style.right=right+'px';}
+ function close(){p.classList.remove('controls-open')}
+ h.addEventListener('click',()=>{if(dragged){dragged=false;return} place();p.classList.toggle('controls-open')});
+ p.querySelectorAll('.control-btn').forEach(b=>b.addEventListener('click',()=>setTimeout(close,80)));
+ document.addEventListener('click',e=>{if(!h.contains(e.target)&&!p.contains(e.target))close()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+ window.addEventListener('resize',()=>{if(p.classList.contains('controls-open'))place()});
+ let timer=null,dragging=false,dragged=false,sx=0,sy=0,st=0,sr=0;
+ function point(e){return e.touches?e.touches[0]:e}
+ function start(e){if(e.button!==undefined&&e.button!==0)return;const q=point(e),r=h.getBoundingClientRect();sx=q.clientX;sy=q.clientY;st=r.top;sr=innerWidth-r.right;dragged=false;clearTimeout(timer);timer=setTimeout(()=>{dragging=true;close();h.style.transition='none'},500)}
+ function move(e){const q=point(e),dx=q.clientX-sx,dy=q.clientY-sy;if(!dragging){if(Math.hypot(dx,dy)>8)clearTimeout(timer);return}e.preventDefault();dragged=true;let top=Math.max(8,Math.min(innerHeight-h.offsetHeight-8,st+dy));let right=Math.max(8,Math.min(innerWidth-h.offsetWidth-8,sr-dx));h.style.top=top+'px';h.style.right=right+'px'}
+ function end(){clearTimeout(timer);if(dragging){dragging=false;h.style.transition='background .2s ease,box-shadow .2s ease';localStorage.setItem(key,JSON.stringify({top:parseFloat(h.style.top),right:parseFloat(h.style.right)}))}}
+ h.addEventListener('mousedown',start);window.addEventListener('mousemove',move,{passive:false});window.addEventListener('mouseup',end);h.addEventListener('touchstart',start,{passive:true});window.addEventListener('touchmove',move,{passive:false});window.addEventListener('touchend',end);window.addEventListener('touchcancel',end);
+})();
+</script>
+</body>
+</html>
