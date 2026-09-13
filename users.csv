@@ -1,5 +1,5 @@
 UserName,Employee Name,Department,Job Titel,Password,Status,Type
 10000807,Ahmed Hassanin,Admin,Admin,3a4ever2020,Active,Admin
-10000884,Ahmed Hefny,NonPharma,Emp,123456,Active,Emp
-12345676,Osama Hussain,NonPharma,Emp,00000,Active,Emp
+10000884,Ahmed Hefny,NonPharma,Employee,123456,Active,Employee
+12345676,Osama Hussain,NonPharma,Employee,00000,Active,Employee
 87654321,Hossam,NonPharma,Employee,00000,Active,Employee
