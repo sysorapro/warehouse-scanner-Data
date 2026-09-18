@@ -1,17 +1,17 @@
-﻿"UserName","Employee Name","Department","Job Titel","Password","Status","Type"
-"10000807","Ahmed Hassanin","Admin","Admin","3a4ever2020","Active","Admin"
-"10000884","Ahmed Hafny","NonPharma","Employee","123456","Active","Employee"
-"10000700","Osama Hussain","NonPharma","Employee","2020","Active","Employee"
-"10001213","Hossam Ibrahim","NonPharma","Employee","9875","Active","Employee"
-"10000367","Ahmed Zaki","NonPharma","Employee","1212","Active","Employee"
-"10005139","Khaled Zaki","NonPharma","Employee","15121988","Active","Employee"
-"10000522","Mahmoud Amara","NonPharma","Employee","opop1234@","Active","Employee"
-"10000184","Salah Salem","NonPharma","Employee","00000","Active","Employee"
-"10008687","Ahmed Soliman","NonPharma","Employee","00000","Active","Employee"
-"10000602","Ahmed Saber","NonPharma","Employee","00000","Active","Employee"
-"10000757","Ahmed Hassanein","NonPharma","Employee","00000","Active","Employee"
-"10002281","Ahmed Abu Al-Layl","NonPharma","Employee","00000","Active","Employee"
-"10001262","Mohamed Khalil","NonPharma","Employee","1907","Active","Employee"
-"10000301","Mohamed Sabour","NonPharma","Employee","00000","Active","Employee"
-"10000185","Medhat Mohamed","NonPharma","Employee","00000","Active","Employee"
-"OS000001","Ahmed Soltan","NonPharma","Employee","std#070522","Active","Employee"
+UserName,Employee Name,Department,Job Titel,Password,Status,Type
+10000807,Ahmed Hassanin,Admin,Admin,3a4ever2020,inActive,Admin
+10000884,Ahmed Hafny,NonPharma,Employee,123456,Active,Employee
+10000700,Osama Hussain,NonPharma,Employee,2020,Active,Employee
+10001213,Hossam Ibrahim,NonPharma,Employee,9875,Active,Employee
+10000367,Ahmed Zaki,NonPharma,Employee,1212,Active,Employee
+10005139,Khaled Zaki,NonPharma,Employee,15121988,Active,Employee
+10000522,Mahmoud Amara,NonPharma,Employee,opop1234@,Active,Employee
+10000184,Salah Salem,NonPharma,Employee,00000,Active,Employee
+10008687,Ahmed Soliman,NonPharma,Employee,00000,Active,Employee
+10000602,Ahmed Saber,NonPharma,Employee,00000,Active,Employee
+10000757,Ahmed Hassanein,NonPharma,Employee,00000,Active,Employee
+10002281,Ahmed Abu Al-Layl,NonPharma,Employee,00000,Active,Employee
+10001262,Mohamed Khalil,NonPharma,Employee,1907,Active,Employee
+10000301,Mohamed Sabour,NonPharma,Employee,00000,Active,Employee
+10000185,Medhat Mohamed,NonPharma,Employee,00000,Active,Employee
+OS000001,Ahmed Soltan,NonPharma,Employee,std#070522,Active,Employee
