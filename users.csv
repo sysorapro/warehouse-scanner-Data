@@ -1,17 +1,17 @@
-﻿"UserName","Employee Name","Department","Job Titel","Password","Status","Type"
-"10000807","Ahmed Hassanin","Admin","Admin","3a4ever","Active","Admin"
-"10000884","Ahmed Hafny","NonPharma","Employee","pbkdf2$210000$a3922a4a29def5ce6e4c3f83c145ab81$d0b73dc36dac4d345669736527bc7b1cfd6c7be71d142d2582ae4bdf42f2f6e7","Active","user"
-"10000700","Osama Hussain","NonPharma","Employee","pbkdf2$210000$a6d28798999379a2282073eacbcb63a4$98b964ff3ca1d0175c8f69fa317d24fbb7e539c1d7a631cd1fb60078ecd57a7d","Active","user"
-"10001213","Hossam Ibrahim","NonPharma","Employee","pbkdf2$210000$724da472d18c4965edcb6f9149361abe$59d4cd1354a3e43ffdf1422e8686afe4905dfbb79ff3664785e088543985e79c","Active","user"
-"10000367","Ahmed Zaki","NonPharma","Employee","pbkdf2$210000$38d16ab5f74042a0983a218ca6958752$58b8c65b48f785e4309afd929ea547b9d13068d3bf19098dc2c0c254cfd18ef4","Active","user"
-"10005139","Khaled Zaki","NonPharma","Employee","pbkdf2$210000$b17468fe31ea5cf89a792601d4c054ce$221fb349f6a3d1b1cbc562ad606e31f1e01389d710698a2e1748500b0fa9cf80","Active","user"
-"10000522","Mahmoud Amara","NonPharma","Employee","pbkdf2$210000$e2598e7d43510569c86be9ef746f0c93$83b21a8c73b60c68ac2f40a291a2705a6ca28475a3d05d10448c6e7b07529f34","Active","user"
-"10000184","Salah Salem","NonPharma","Employee","pbkdf2$210000$8aa73eac406469b9085e99b9530da91f$80b1ff2ea4104dfbc22304b87c736a9f632972a899b00b4d7a151f83bca24f95","Active","user"
-"10008687","Ahmed Soliman","NonPharma","Employee","00000","Active","user"
-"10000602","Ahmed Saber","NonPharma","Employee","00000","Active","user"
-"10000757","Ahmed Hassanein","NonPharma","Employee","00000","Active","user"
-"10002281","Ahmed Abu Al-Layl","NonPharma","Employee","00000","Active","user"
-"10001262","Mohamed Khalil","NonPharma","Employee","pbkdf2$210000$cce5441b43ca801b220de5c1e3219b05$c6bd6f80af700a69f792186d982eb12d9d46174f4b345de7183d55bbce4923c8","Active","user"
-"10000301","Mohamed Sabour","NonPharma","Employee","00000","Active","user"
-"10000185","Medhat Mohamed","NonPharma","Employee","00000","Active","user"
-"OS000001","Ahmed Soltan","NonPharma","Employee","pbkdf2$210000$efe274daddb312a500df43f476dd4c68$afb7b5af0c89d261b341d9d1eb69ae23eb608537f156da9775c560a0f5041edd","Active","user"
+UserName,Employee Name,Department,Job Titel,Password,Status,Type
+10000807,Ahmed Hassanin,Admin,Admin,00000,Active,Admin
+10000884,Ahmed Hafny,NonPharma,Employee,pbkdf2$210000$a3922a4a29def5ce6e4c3f83c145ab81$d0b73dc36dac4d345669736527bc7b1cfd6c7be71d142d2582ae4bdf42f2f6e7,Active,user
+10000700,Osama Hussain,NonPharma,Employee,pbkdf2$210000$a6d28798999379a2282073eacbcb63a4$98b964ff3ca1d0175c8f69fa317d24fbb7e539c1d7a631cd1fb60078ecd57a7d,Active,user
+10001213,Hossam Ibrahim,NonPharma,Employee,pbkdf2$210000$724da472d18c4965edcb6f9149361abe$59d4cd1354a3e43ffdf1422e8686afe4905dfbb79ff3664785e088543985e79c,Active,user
+10000367,Ahmed Zaki,NonPharma,Employee,pbkdf2$210000$38d16ab5f74042a0983a218ca6958752$58b8c65b48f785e4309afd929ea547b9d13068d3bf19098dc2c0c254cfd18ef4,Active,user
+10005139,Khaled Zaki,NonPharma,Employee,pbkdf2$210000$b17468fe31ea5cf89a792601d4c054ce$221fb349f6a3d1b1cbc562ad606e31f1e01389d710698a2e1748500b0fa9cf80,Active,user
+10000522,Mahmoud Amara,NonPharma,Employee,pbkdf2$210000$e2598e7d43510569c86be9ef746f0c93$83b21a8c73b60c68ac2f40a291a2705a6ca28475a3d05d10448c6e7b07529f34,Active,user
+10000184,Salah Salem,NonPharma,Employee,pbkdf2$210000$8aa73eac406469b9085e99b9530da91f$80b1ff2ea4104dfbc22304b87c736a9f632972a899b00b4d7a151f83bca24f95,Active,user
+10008687,Ahmed Soliman,NonPharma,Employee,00000,Active,user
+10000602,Ahmed Saber,NonPharma,Employee,00000,Active,user
+10000757,Ahmed Hassanein,NonPharma,Employee,00000,Active,user
+10002281,Ahmed Abu Al-Layl,NonPharma,Employee,00000,Active,user
+10001262,Mohamed Khalil,NonPharma,Employee,pbkdf2$210000$cce5441b43ca801b220de5c1e3219b05$c6bd6f80af700a69f792186d982eb12d9d46174f4b345de7183d55bbce4923c8,Active,user
+10000301,Mohamed Sabour,NonPharma,Employee,00000,Active,user
+10000185,Medhat Mohamed,NonPharma,Employee,00000,Active,user
+OS000001,Ahmed Soltan,NonPharma,Employee,pbkdf2$210000$efe274daddb312a500df43f476dd4c68$afb7b5af0c89d261b341d9d1eb69ae23eb608537f156da9775c560a0f5041edd,Active,user
