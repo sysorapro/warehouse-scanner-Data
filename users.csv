@@ -16,5 +16,5 @@
 "10000185","Medhat Mohamed","NonPharma","Employee","00000","Active","user"
 "OS000001","Ahmed Soltan","NonPharma","Employee","pbkdf2$210000$efe274daddb312a500df43f476dd4c68$afb7b5af0c89d261b341d9d1eb69ae23eb608537f156da9775c560a0f5041edd","Active","user"
 "10003952","Mostafa Mishref","NonPharma","Manager","pbkdf2$210000$b73c622ffe036cacf66fb10e6a6d4cb5$a1b88c75c1cd1a68022b72c78a172c520ef7bc6f560ba50f344fe7d067c09bda","Active","Manager"
-"10004492","Mohamed Atef Saied","NonPharma","Employee","pbkdf2$210000$d06bcb4a3b91e51c4fea9b5826ee540a$5f85cde71d1a8dbe602f00d669dbef6fb3e12334f166a9be45222f3c8d6d1097","Active","Employee"
-"10000094","Mostafa Ibrahem","NonPharma","Employee","pbkdf2$210000$44790f502cb2251754c2ef169a9c8521$2da6013a7e26522f02add0a37e8fa8c62ba7c1f5d0a95f7a2880551b1507f9e2","Active","Employee"
+"10004492","Mohamed Atef Saied","NonPharma","Employee","pbkdf2$210000$d06bcb4a3b91e51c4fea9b5826ee540a$5f85cde71d1a8dbe602f00d669dbef6fb3e12334f166a9be45222f3c8d6d1097","Active","user"
+"10000094","Mostafa Ibrahem","NonPharma","Employee","pbkdf2$210000$44790f502cb2251754c2ef169a9c8521$2da6013a7e26522f02add0a37e8fa8c62ba7c1f5d0a95f7a2880551b1507f9e2","Active","user"
