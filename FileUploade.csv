@@ -1,2 +1,2 @@
-﻿Department,SheetNo.,SheetName,ActionType,Item Code,Item Name,Upload date,PersonalName,Trans.Status,Trans.Date,Scanned,ShelfNo,Scan.Date,Deletion,Deletion date
-NonPharma,0000000000,Test,Edit,2700770,IU 2012 RIBBON (R504),03/10/2026 21:32:35,,,,,,,,
+﻿"Department","SheetNo.","SheetName","ActionType","Item Code","Item Name","Upload date","PersonalName","Trans.Status","Trans.Date","Scanned","ShelfNo","Scan.Date","Deletion","Deletion date"
+"NonPharma","0000000000","Test","Edit","2700770","IU 2012 RIBBON (R504)","03/10/2026 21:32:35","10000807","Done","03/10/2026 21:37:13","","","","",""
