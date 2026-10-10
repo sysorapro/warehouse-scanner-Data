@@ -21,5 +21,5 @@
 "10002314","Ahmed Ali","NonPharma","Employee","pbkdf2$210000$d21313730d3dc86d4d8af3a8d764a0b4$1645cb7dd5f53bb2536dbdc2b70e4be7d2dc508e77101beb2b828e0e0c404a16","Active","User","01130161649",""
 "10002427","Saied Elazazi","NonPharma","Employee","pbkdf2$210000$18388ee1978b301d42bd6c951c139a11$040fd21b474d98ae478a59335865245e5faef27c9958b45d4e182a637c264aaa","Active","User","01157666467",""
 "10003001","Anwer Hassan","NonPharma","Employee","pbkdf2$210000$84bdb8330193c0205eda961dbc4dc70d$26220b763167947227ff71d4dfdb6fa43a7aae6eef74366f10966aac24b694c8","Active","User","01110627912",""
-"TE000000","Test Employee","NonPharma","Employee","00000","Active","User","01501944338",""
+"TE000000","Test Employee","NonPharma","Employee","pbkdf2$210000$a38b6c17b619d71a1ec74d9071cd8b39$a8041e38688df23237dacdaf43700cbfe5d82c3a8861b433265f7e016590aee6","Active","User","01501944338",""
 "TM000000","Test Manager","NonPharma","Employee","00000","Active","Manager","01501944338",""
